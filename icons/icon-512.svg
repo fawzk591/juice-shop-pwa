@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Juice Shop</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #17301f;
+    }
+    body {
+      display: grid;
+      place-items: center;
+      font-family: system-ui, -apple-system, Arial, sans-serif;
+    }
+    svg {
+      width: min(88vw, 500px);
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-label="Juice Shop icon">
+    <rect width="512" height="512" fill="#17301f"/>
+    <circle cx="256" cy="256" r="180" fill="#f2a516"/>
+    <g stroke="#d8981c" stroke-width="12" stroke-linecap="round">
+      <line x1="256" y1="76" x2="256" y2="168"/>
+      <line x1="256" y1="344" x2="256" y2="436"/>
+      <line x1="76" y1="256" x2="168" y2="256"/>
+      <line x1="344" y1="256" x2="436" y2="256"/>
+      <line x1="126" y1="126" x2="186" y2="186"/>
+      <line x1="326" y1="326" x2="386" y2="386"/>
+      <line x1="126" y1="386" x2="186" y2="326"/>
+      <line x1="326" y1="186" x2="386" y2="126"/>
+    </g>
+    <circle cx="256" cy="256" r="18" fill="#b0243f"/>
+  </svg>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Juice Shop</title>
+<link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#17301f">
+<meta name="background-color" content="#f3f6f2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Juice Shop">
+<link rel="apple-touch-icon" href="icons/icon-192.svg">
+<style>
+:root{--ink:#17301f;--bg:#f3f6f2;--card:#fff;--line:#d9e1d6;--red:#b0243f;--mango:#f2a516;--green:#2e7d4f;--mute:#5c6f60}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px}
+header{background:var(--ink);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header b{font-size:18px}
+header span{font-size:13px;opacity:.8}
+nav{display:flex;position:sticky;top:0;z-index:5;background:#fff;border-bottom:2px solid var(--line)}
+nav button{flex:1;padding:14px 4px;border:0;background:none;font-size:15px;font-weight:700;color:var(--mute);border-bottom:4px solid transparent}
+nav button.on{color:var(--red);border-bottom-color:var(--red)}
+main{max-width:900px;margin:0 auto;padding:12px}
+.tab{display:none}.tab.on{display:block}
+h2{font-size:17px;margin:18px 0 8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.juice{position:relative;min-height:78px;border:2px solid var(--line);border-radius:12px;background:var(--card);font-size:17px;font-weight:700;color:var(--ink);padding:8px;text-align:left}
+.juice small{display:block;font-weight:500;color:var(--mute);margin-top:4px}
+.juice:active{background:#fff4d6}
+.juice .badge{position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border-radius:99px;min-width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;padding:0 6px}
+.juice.has{border-color:var(--red)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px}
+.btn{border:0;border-radius:10px;padding:14px 16px;font-size:16px;font-weight:700;background:var(--green);color:#fff;min-height:50px}
+.btn.red{background:var(--red)}.btn.grey{background:#e6ece4;color:var(--ink)}.btn.sm{padding:8px 12px;min-height:40px;font-size:14px}
+.btn.full{width:100%}
+input,select{width:100%;padding:12px;font-size:16px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+label{font-size:13px;color:var(--mute);display:block;margin:8px 0 4px}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.cartline{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.cartline button{width:40px;height:40px;border-radius:99px;border:2px solid var(--line);background:#fff;font-size:20px;font-weight:700}
+.make{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--mango);color:#2b1c00;font-weight:800;padding:8px 12px;border-radius:99px;font-size:16px}
+.order{background:var(--card);border:2px solid var(--line);border-left:8px solid var(--mango);border-radius:12px;padding:12px;margin-top:10px}
+.order:first-child{border-left-color:var(--red)}
+.order .top{display:flex;justify-content:space-between;font-weight:800;font-size:18px}
+.order .items{font-size:18px;margin:6px 0 10px;line-height:1.5}
+.order .meta{color:var(--mute);font-size:13px;font-weight:500}
+.jar{background:#fff;border:2px solid var(--mango);border-radius:12px;padding:12px;margin-top:10px}
+.jt{display:flex;justify-content:space-between;font-size:20px;font-weight:800}
+.who{font-size:17px;margin:8px 0;display:flex;flex-wrap:wrap;gap:6px}
+.who span{background:#fff4d6;border-radius:8px;padding:4px 10px;font-weight:700}
+.who span.w1{background:var(--red);color:#fff}
+.order.ready{border-left-color:var(--green)!important;background:#eefaf1}
+.ok{color:var(--green);font-weight:800;font-size:14px}.wait{color:var(--red);font-weight:700;font-size:14px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat b{display:block;font-size:24px}.stat span{font-size:13px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:13px;color:var(--mute)}
+td.n,th.n{text-align:right}
+.empty{color:var(--mute);padding:14px 0;text-align:center}
+.pos{color:var(--green);font-weight:800}.neg{color:var(--red);font-weight:800}
+.seg{display:flex;gap:6px;margin-bottom:6px}.seg button{flex:1;padding:12px 4px;border:2px solid var(--line);border-radius:10px;background:#fff;font-weight:700;font-size:15px}
+.seg button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.mrow{display:grid;grid-template-columns:1fr 90px 44px;gap:6px;margin-bottom:6px}
+#repOut{background:#fff;border:1px solid var(--line);border-radius:6px;padding:22px;margin-top:12px}
+#repOut h1{margin:0;font-size:24px}
+#repOut .sub{color:var(--mute);font-size:13px;margin:2px 0 14px}
+#repOut .band{border-top:4px solid var(--red);margin:10px 0 14px}
+#repOut h3{margin:18px 0 6px;font-size:15px;border-bottom:2px solid var(--ink);padding-bottom:4px}
+#repOut .sum{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+#repOut .sum div{border:1px solid var(--line);padding:8px;border-radius:6px}
+#repOut .sum b{display:block;font-size:18px}#repOut .sum span{font-size:11px;color:var(--mute)}
+#repOut tfoot td{font-weight:800;border-top:2px solid var(--ink)}
+.foot{margin-top:22px;font-size:11px;color:var(--mute);text-align:center}
+@media(max-width:560px){#repOut .sum{grid-template-columns:1fr 1fr}#repOut{padding:12px}}
+@media print{
+  header,nav,.noprint{display:none!important}
+  body{background:#fff}main{padding:0;max-width:none}
+  .tab{display:none!important}#reports{display:block!important}
+  #repOut{border:0;padding:0;margin:0}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+<header><b id="shopTitle">Juice Shop</b><span id="todayLbl"></span></header>
+<nav>
+  <button data-t="orders" class="on">Orders</button>
+  <button data-t="today">Today</button>
+  <button data-t="expenses">Expenses</button>
+  <button data-t="reports">Reports</button>
+  <button data-t="menu">Menu</button>
+</nav>
+<main>
+<section id="orders" class="tab on">
+  <h2>Tap juice to add</h2>
+  <div class="grid" id="juiceGrid"></div>
+  <div class="box" id="cartBox" style="display:none">
+    <div id="cartLines"></div>
+    <div class="cartline" style="border:0"><b>Total</b><b id="cartTotal"></b></div>
+    <label>Customer name (optional)</label>
+    <input id="custName" placeholder="e.g. Rahim, blue shirt" autocomplete="off">
+    <div class="row" style="margin-top:10px">
+      <button class="btn grey" onclick="clearCart()">Clear</button>
+      <button class="btn red" style="flex:2" onclick="placeOrder()">Place order</button>
+    </div>
+  </div>
+
+  <h2>Make now (by juice)</h2>
+  <div id="makeNow"></div>
+
+  <h2>Waiting (first order on top)</h2>
+  <div id="queue"></div>
+
+  <h2>Last served</h2>
+  <div id="lastDone"></div>
+</section>
+
+<section id="today" class="tab">
+  <label>Date</label>
+  <input type="date" id="todayDate">
+  <div class="cards" style="margin-top:10px" id="todayStats"></div>
+  <h2>Juice sold</h2>
+  <div class="box" id="todayJuice"></div>
+</section>
+
+<section id="expenses" class="tab">
+  <div class="box">
+    <label>What did you spend on?</label>
+    <input id="exName" placeholder="e.g. Mangoes, ice, cups" autocomplete="off">
+    <div class="row">
+      <div><label>Amount</label><input id="exAmt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div><label>Date</label><input id="exDate" type="date"></div>
+    </div>
+    <button class="btn red full" style="margin-top:12px" onclick="addExpense()">Add expense</button>
+  </div>
+  <h2>Recent expenses</h2>
+  <div class="box" id="exList"></div>
+</section>
+
+<section id="reports" class="tab">
+  <div class="noprint">
+    <div class="seg" id="repType">
+      <button data-r="day" class="on">Daily</button>
+      <button data-r="month">Monthly</button>
+      <button data-r="range">Custom</button>
+    </div>
+    <div id="rDay"><label>Date</label><input type="date" id="rDate"></div>
+    <div id="rMonth" style="display:none"><label>Month</label><input type="month" id="rMon"></div>
+    <div id="rRange" style="display:none" class="row">
+      <div><label>From</label><input type="date" id="rFrom"></div>
+      <div><label>To</label><input type="date" id="rTo"></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" onclick="makeReport()">Show report</button>
+      <button class="btn red" onclick="printReport()">Save as PDF</button>
+    </div>
+    <p style="font-size:13px;color:var(--mute);margin:8px 0 0">Save as PDF opens the print window. Choose "Save as PDF" as the printer.</p>
+  </div>
+  <div id="repOut"></div>
+</section>
+
+<section id="menu" class="tab">
+  <div class="box">
+    <label>Shop name (shows on reports)</label>
+    <input id="shopName">
+    <label>Glasses in one jar</label>
+    <input id="jarSize" type="number" inputmode="numeric" min="1">
+  </div>
+  <h2>Juice list and price</h2>
+  <div class="box">
+    <div id="menuRows"></div>
+    <button class="btn grey full" onclick="addJuice()">+ Add juice</button>
+  </div>
+  <h2>Backup</h2>
+  <div class="box">
+    <p style="margin:0 0 10px;font-size:14px;color:var(--mute)">Data is saved only in this phone/browser. Download a backup now and then.</p>
+    <div class="row">
+      <button class="btn grey" onclick="exportData()">Download backup</button>
+      <button class="btn grey" onclick="$('#imp').click()">Restore backup</button>
+    </div>
+    <input type="file" id="imp" accept=".json" style="display:none">
+  </div>
+</section>
+
+</main>
+<div id="editModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;overflow:auto"><div class="box" id="editBox" style="max-width:560px;margin:16px auto"></div></div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>ymd(new Date());
+const money=n=>'₹'+(Math.round(n*100)/100).toLocaleString('en-IN');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tm=iso=>new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+const nice=d=>{const[y,m,dd]=d.split('-');return new Date(y,m-1,dd).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})};
+
+const KEY='juiceShopApp';
+let S={shop:'My Juice Shop',menu:[
+ {id:1,name:'Mango',price:50},{id:2,name:'Orange',price:40},{id:3,name:'Apple',price:50},
+ {id:4,name:'Pineapple',price:40},{id:5,name:'Watermelon',price:30},{id:6,name:'Mosambi',price:40},
+ {id:7,name:'Pomegranate',price:60},{id:8,name:'Banana shake',price:50}],orders:[],expenses:[]};
+try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.menu)S=x}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+S.stock=S.stock||{};S.jar=S.jar||5;
+let cart={};
+
+$$('nav button').forEach(b=>b.onclick=()=>{
+  $$('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  $$('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t));
+  refresh();window.scrollTo(0,0);
+});
+
+function renderGrid(){
+  $('#juiceGrid').innerHTML=S.menu.map(m=>`<button class="juice ${cart[m.id]?'has':''}" onclick="addCart(${m.id})">${esc(m.name)}<small>${money(m.price)}</small>${cart[m.id]?`<span class="badge">${cart[m.id]}</span>`:''}</button>`).join('');
+}
+function addCart(id){cart[id]=(cart[id]||0)+1;renderCart()}
+function decCart(id){cart[id]--;if(cart[id]<=0)delete cart[id];renderCart()}
+function clearCart(){cart={};$('#custName').value='';renderCart()}
+function renderCart(){
+  renderGrid();
+  const items=S.menu.filter(m=>cart[m.id]);
+  $('#cartBox').style.display=items.length?'block':'none';
+  $('#cartLines').innerHTML=items.map(m=>`<div class="cartline"><span><b>${cart[m.id]} ×</b> ${esc(m.name)}</span><span>${money(m.price*cart[m.id])} <button onclick="decCart(${m.id})">−</button> <button onclick="addCart(${m.id})">+</button></span></div>`).join('');
+  $('#cartTotal').textContent=money(items.reduce((a,m)=>a+m.price*cart[m.id],0));
+}
+function placeOrder(){
+  const items=S.menu.filter(m=>cart[m.id]).map(m=>({n:m.name,p:m.price,q:cart[m.id],r:0}));
+  if(!items.length)return;
+  const d=today();
+  const token=S.orders.filter(o=>o.date===d).length+1;
+  S.orders.push({id:Date.now(),token,name:$('#custName').value.trim(),items,total:items.reduce((a,i)=>a+i.p*i.q,0),at:new Date().toISOString(),date:d,status:'pending'});
+  items.forEach(i=>allocate(i.n));
+  save();clearCart();renderQueue();
+}
+const jarSize=()=>S.jar||5;
+const pendOrders=()=>S.orders.filter(o=>o.status==='pending').sort((a,b)=>a.id-b.id);
+function allocate(name){
+  let st=S.stock[name]||0;
+  for(const o of pendOrders())for(const i of o.items){
+    if(i.n!==name||st<=0)continue;
+    const give=Math.min(i.q-(i.r||0),st);
+    if(give>0){i.r=(i.r||0)+give;st-=give}
+  }
+  S.stock[name]=st;
+}
+function jarMade(name){S.stock[name]=(S.stock[name]||0)+jarSize();allocate(name);save();renderQueue()}
+function setStatus(id,st){
+  if(st==='cancelled'&&!confirm('Cancel this order?'))return;
+  const o=S.orders.find(o=>o.id===id);if(!o)return;
+  if(st==='cancelled'){
+    o.items.forEach(i=>{if(i.r){S.stock[i.n]=(S.stock[i.n]||0)+i.r;i.r=0}});
+    o.status=st;o.items.forEach(i=>allocate(i.n));
+  }else o.status=st;
+  save();renderQueue();
+}
+function renderQueue(){
+  const pend=pendOrders(),jar=jarSize();
+  const need={};
+  pend.forEach(o=>o.items.forEach(i=>{
+    const rem=i.q-(i.r||0);if(rem<=0)return;
+    const x=need[i.n]=need[i.n]||{n:0,who:[]};x.n+=rem;x.who.push({o,rem});
+  }));
+  let h=Object.entries(need).map(([name,x])=>{
+    const jars=Math.ceil(x.n/jar),left=jars*jar-x.n,st=S.stock[name]||0;
+    return `<div class="jar"><div class="jt"><span>${esc(name)}</span><span>Need ${x.n}</span></div>
+    <div class="who">${x.who.map((c,k)=>`<span class="${k===0?'w1':''}">#${c.o.token} ${esc(c.o.name)} × ${c.rem}</span>`).join('')}</div>
+    <div class="meta" style="color:var(--mute);font-size:13px;margin-bottom:8px">Make ${jars} jar${jars>1?'s':''} (${jars*jar} glasses)${left?' · '+left+' extra will be left':''}</div>
+    <button class="btn red full" data-n="${esc(name)}" onclick="jarMade(this.dataset.n)">${esc(name)} jar made (+${jar})</button></div>`;
+  }).join('');
+  if(!h)h='<div class="empty">Nothing to make</div>';
+  const stock=Object.entries(S.stock).filter(([n,q])=>q>0);
+  if(stock.length)h+=`<div class="make" style="margin-top:10px">${stock.map(([n,q])=>`<span class="chip" style="background:#d8efe0;color:var(--ink)">Extra ready: ${esc(n)} × ${q}</span>`).join('')}</div>`;
+  $('#makeNow').innerHTML=h;
+  $('#queue').innerHTML=pend.length?pend.map(o=>{
+    const ready=o.items.every(i=>(i.r||0)>=i.q);
+    const lines=o.items.map(i=>{const r=i.r||0,rem=i.q-r;
+      return `<b>${i.q}</b> × ${esc(i.n)} `+(rem===0?'<span class="ok">✓ ready</span>':r>0?`<span class="wait">${r} ready, ${rem} waiting</span>`:'<span class="wait">waiting</span>')}).join('<br>');
+    return `<div class="order ${ready?'ready':''}"><div class="top"><span>#${o.token} ${esc(o.name)||''}${ready?' · READY':''}</span><span>${money(o.total)}</span></div><div class="items">${lines}</div><div class="row"><button class="btn" onclick="setStatus(${o.id},'done')">Served ✓</button><button class="btn grey sm" style="flex:.45" onclick="editOrder(${o.id})">Edit</button><button class="btn grey sm" style="flex:.45" onclick="setStatus(${o.id},'cancelled')">Cancel</button></div><div class="meta">${tm(o.at)}${o.date!==today()?' · '+nice(o.date):''}</div></div>`;
+  }).join(''):'<div class="empty">No waiting orders</div>';
+  const done=S.orders.filter(o=>o.status==='done').sort((a,b)=>b.id-a.id).slice(0,4);
+  $('#lastDone').innerHTML=done.length?done.map(o=>`<div class="cartline"><span>#${o.token} ${esc(o.name)} <span style="color:var(--mute);font-size:13px">${o.items.map(i=>i.q+' '+esc(i.n)).join(', ')}</span></span><button class="btn grey sm" onclick="setStatus(${o.id},'pending')" style="width:auto;font-size:13px">Undo</button></div>`).join(''):'<div class="empty">—</div>';
+}
+
+function stats(from,to){
+  const os=S.orders.filter(o=>o.status!=='cancelled'&&o.date>=from&&o.date<=to);
+  const es=S.expenses.filter(e=>e.date>=from&&e.date<=to);
+  const byJuice={},byDay={};let items=0,sales=0;
+  os.forEach(o=>{
+    sales+=o.total;
+    byDay[o.date]=byDay[o.date]||{orders:0,sales:0,exp:0};byDay[o.date].orders++;byDay[o.date].sales+=o.total;
+    o.items.forEach(i=>{items+=i.q;const j=byJuice[i.n]=byJuice[i.n]||{q:0,amt:0};j.q+=i.q;j.amt+=i.q*i.p});
+  });
+  let exp=0;es.forEach(e=>{exp+=e.amt;byDay[e.date]=byDay[e.date]||{orders:0,sales:0,exp:0};byDay[e.date].exp+=e.amt});
+  return{os,es,byJuice,byDay,items,sales,exp,orders:os.length,profit:sales-exp};
+}
+const pl=n=>`<span class="${n>=0?'pos':'neg'}">${money(n)}</span>`;
+const juiceTable=(st,foot)=>{
+  const rows=Object.entries(st.byJuice).sort((a,b)=>b[1].q-a[1].q);
+  if(!rows.length)return '<div class="empty">No sales</div>';
+  return `<table><thead><tr><th>Juice</th><th class="n">Sold</th><th class="n">Amount</th></tr></thead><tbody>${rows.map(([n,j])=>`<tr><td>${esc(n)}</td><td class="n">${j.q}</td><td class="n">${money(j.amt)}</td></tr>`).join('')}</tbody><tfoot><tr><td>Total</td><td class="n">${st.items}</td><td class="n">${money(st.sales)}</td></tr></tfoot></table>`;
+};
+
+function renderToday(){
+  const d=$('#todayDate').value||today();
+  const st=stats(d,d);
+  $('#todayStats').innerHTML=`<div class="stat"><span>Sales</span><b>${money(st.sales)}</b></div><div class="stat"><span>Juices sold</span><b>${st.items}</b></div><div class="stat"><span>Expenses</span><b>${money(st.exp)}</b></div><div class="stat"><span>Profit</span><b>${pl(st.profit)}</b></div>`;
+  $('#todayJuice').innerHTML=juiceTable(st);
+}
+$('#todayDate').onchange=renderToday;
+
+function addExpense(){
+  const name=$('#exName').value.trim(),amt=parseFloat($('#exAmt').value),date=$('#exDate').value||today();
+  if(!name||!(amt>0)){alert('Enter what you spent on and the amount');return}
+  S.expenses.push({id:Date.now(),name,amt,date});save();
+  $('#exName').value='';$('#exAmt').value='';renderExpenses();
+}
+function delExpense(id){if(confirm('Delete this expense?')){S.expenses=S.expenses.filter(e=>e.id!==id);save();renderExpenses()}}
+function renderExpenses(){
+  const l=[...S.expenses].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).slice(0,60);
+  $('#exList').innerHTML=l.length?`<table><tbody>${l.map(e=>`<tr><td>${esc(e.name)}<br><span style="font-size:12px;color:var(--mute)">${nice(e.date)}</span></td><td class="n">${money(e.amt)}</td><td class="n" style="width:50px"><button class="btn grey sm" onclick="delExpense(${e.id})">✕</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">No expenses yet</div>';
+}
+
+let rType='day';
+$$('#repType button').forEach(b=>b.onclick=()=>{
+  rType=b.dataset.r;
+  $$('#repType button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#rDay').style.display=rType==='day'?'block':'none';
+  $('#rMonth').style.display=rType==='month'?'block':'none';
+  $('#rRange').style.display=rType==='range'?'flex':'none';
+  makeReport();
+});
+function period(){
+  if(rType==='day'){const d=$('#rDate').value||today();return{from:d,to:d,title:'Daily Sales Report',label:nice(d),file:'Daily-'+d}}
+  if(rType==='month'){
+    const m=$('#rMon').value||today().slice(0,7);const[y,mo]=m.split('-').map(Number);
+    const last=new Date(y,mo,0).getDate();
+    return{from:m+'-01',to:m+'-'+pad(last),title:'Monthly Sales Report',label:new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'long',year:'numeric'}),file:'Monthly-'+m}
+  }
+  let f=$('#rFrom').value||today(),t=$('#rTo').value||today();if(f>t)[f,t]=[t,f];
+  return{from:f,to:t,title:'Sales Report',label:nice(f)+' to '+nice(t),file:'Report-'+f+'-to-'+t};
+}
+function makeReport(){
+  const p=period(),st=stats(p.from,p.to);
+  const days=Object.keys(st.byDay).sort();
+  let h=`<h1>${esc(S.shop)}</h1><div class="sub">${p.title} · ${p.label}</div><div class="band"></div>
+  <div class="sum"><div><span>Orders</span><b>${st.orders}</b></div><div><span>Juices sold</span><b>${st.items}</b></div><div><span>Sales</span><b>${money(st.sales)}</b></div><div><span>Expenses</span><b>${money(st.exp)}</b></div><div><span>Net profit</span><b>${pl(st.profit)}</b></div></div>
+  <h3>Juice-wise sales</h3>${juiceTable(st)}`;
+  if(p.from!==p.to){
+    h+=`<h3>Day-wise summary</h3>`+(days.length?`<table><thead><tr><th>Date</th><th class="n">Orders</th><th class="n">Sales</th><th class="n">Expenses</th><th class="n">Profit</th></tr></thead><tbody>${days.map(d=>{const x=st.byDay[d];return`<tr><td>${nice(d)}</td><td class="n">${x.orders}</td><td class="n">${money(x.sales)}</td><td class="n">${money(x.exp)}</td><td class="n">${pl(x.sales-x.exp)}</td></tr>`}).join('')}</tbody><tfoot><tr><td>Total</td><td class="n">${st.orders}</td><td class="n">${money(st.sales)}</td><td class="n">${money(st.exp)}</td><td class="n">${pl(st.profit)}</td></tr></tfoot></table>`:'<div class="empty">No data</div>');
+  }
+  const es=[...st.es].sort((a,b)=>a.date.localeCompare(b.date));
+  h+=`<h3>Expenses</h3>`+(es.length?`<table><thead><tr><th>Date</th><th>Item</th><th class="n">Amount</th></tr></thead><tbody>${es.map(e=>`<tr><td>${nice(e.date)}</td><td>${esc(e.name)}</td><td class="n">${money(e.amt)}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="2">Total</td><td class="n">${money(st.exp)}</td></tr></tfoot></table>`:'<div class="empty">No expenses</div>');
+  h+=`<div class="foot">Generated on ${new Date().toLocaleString('en-IN')}</div>`;
+  $('#repOut').innerHTML=h;
+  return p;
+}
+function printReport(){
+  const p=makeReport(),old=document.title;
+  document.title=(S.shop+' '+p.file).replace(/\s+/g,'-');
+  window.print();
+  setTimeout(()=>document.title=old,1000);
+}
+
+function renderMenu(){
+  $('#shopName').value=S.shop;$('#jarSize').value=jarSize();
+  $('#menuRows').innerHTML=S.menu.map((m,i)=>`<div class="mrow"><input value="${esc(m.name)}" onchange="S.menu[${i}].name=this.value.trim()||'Juice';save();renderGrid()"><input type="number" inputmode="decimal" value="${m.price}" onchange="S.menu[${i}].price=parseFloat(this.value)||0;save();renderGrid()"><button class="btn grey sm" onclick="delJuice(${i})">✕</button></div>`).join('');
+}
+$('#shopName').oninput=e=>{S.shop=e.target.value||'My Juice Shop';$('#shopTitle').textContent=S.shop;save()};
+$('#jarSize').oninput=e=>{S.jar=Math.max(1,parseInt(e.target.value)||5);save();renderQueue()};
+function addJuice(){S.menu.push({id:Date.now(),name:'New juice',price:40});save();renderMenu();renderGrid()}
+function delJuice(i){if(confirm('Remove '+S.menu[i].name+' from the list? Old sales stay in reports.')){delete cart[S.menu[i].id];S.menu.splice(i,1);save();renderMenu();renderCart()}}
+function exportData(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));
+  a.download='juice-backup-'+today()+'.json';a.click();
+}
+$('#imp').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.menu||!x.orders)throw 0;if(confirm('Replace all current data with this backup?')){S=x;save();init()}}catch(_){alert('This is not a valid backup file')}};
+  r.readAsText(f);e.target.value='';
+};
+
+let ed=null;
+function editOrder(id){
+  const o=S.orders.find(x=>x.id===id);if(!o)return;
+  ed={id,token:o.token,name:o.name||'',items:o.items.map(i=>({...i,r:i.r||0}))};
+  renderEdit();$('#editModal').style.display='block';
+}
+function renderEdit(){
+  const tot=ed.items.reduce((a,i)=>a+i.p*i.q,0);
+  $('#editBox').innerHTML=`<div style="font-size:18px;font-weight:800">Edit order #${ed.token}</div>
+  <label>Customer name</label><input value="${esc(ed.name)}" oninput="ed.name=this.value">
+  <h2 style="margin-top:14px">Current juices</h2>
+  ${ed.items.length?ed.items.map((i,k)=>`<div class="cartline"><span><b>${i.q} ×</b> ${esc(i.n)}</span><span>${money(i.p*i.q)} <button onclick="edDec(${k})">−</button> <button onclick="edInc(${k})">+</button></span></div>`).join(''):'<div class="empty">No juice. Add one below, or cancel the order.</div>'}
+  <div class="cartline" style="border:0"><b>Total</b><b>${money(tot)}</b></div>
+  <h2 style="margin-top:14px">Add juice</h2>
+  <div class="grid">${S.menu.map((m,k)=>`<button class="juice" onclick="edAdd(${k})">${esc(m.name)}<small>${money(m.price)}</small></button>`).join('')}</div>
+  <div class="row" style="margin-top:14px"><button class="btn grey" onclick="closeEdit()">Close</button><button class="btn red" style="flex:2" onclick="saveEdit()">Save changes</button></div>`;
+}
+const edInc=k=>{ed.items[k].q++;renderEdit()};
+function edDec(k){ed.items[k].q--;if(ed.items[k].q<=0)ed.items.splice(k,1);renderEdit()}
+function edAdd(k){const m=S.menu[k],f=ed.items.find(i=>i.n===m.name);if(f)f.q++;else ed.items.push({n:m.name,p:m.price,q:1,r:0});renderEdit()}
+function closeEdit(){ed=null;$('#editModal').style.display='none'}
+function saveEdit(){
+  const o=S.orders.find(x=>x.id===ed.id);if(!o)return closeEdit();
+  if(!ed.items.length){alert('Order has no juice. Close this window and tap Cancel on the order instead.');return}
+  const names=new Set([...o.items.map(i=>i.n),...ed.items.map(i=>i.n)]);
+  o.items.forEach(old=>{
+    const nw=ed.items.find(i=>i.n===old.n),r=old.r||0,keep=nw?Math.min(r,nw.q):0;
+    if(r-keep>0)S.stock[old.n]=(S.stock[old.n]||0)+(r-keep);
+    if(nw)nw.r=keep;
+  });
+  o.items=ed.items;o.name=ed.name.trim();o.total=o.items.reduce((a,i)=>a+i.p*i.q,0);
+  names.forEach(allocate);
+  save();closeEdit();renderQueue();
+}
+
+function refresh(){renderQueue();renderToday();renderExpenses();renderMenu();}
+function init(){
+  S.stock=S.stock||{};S.jar=S.jar||5;
+  $('#shopTitle').textContent=S.shop;
+  $('#todayLbl').textContent=new Date().toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short'});
+  const t=today();
+  ['#todayDate','#exDate','#rDate','#rFrom','#rTo'].forEach(s=>$(s).value=t);
+  $('#rMon').value=t.slice(0,7);
+  cart={};renderCart();refresh();makeReport();
+}
+init();
+
+if ('serviceWorker' in navigator) {
+  const isSecureContext = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (isSecureContext) {
+    navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+  }
+}
+</script>
+</body>
+</html>

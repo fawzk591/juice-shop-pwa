@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline - Juice Shop</title>
+  <style>
+    :root {
+      --ink: #17301f;
+      --bg: #f3f6f2;
+      --mango: #f2a516;
+      --red: #b0243f;
+      --green: #2e7d4f;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, Arial, sans-serif;
+      text-align: center;
+    }
+    .card {
+      max-width: 420px;
+      background: white;
+      border: 2px solid #d9e1d6;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 8px 24px rgba(23, 48, 31, 0.08);
+    }
+    .marker {
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: var(--mango);
+      position: relative;
+      box-shadow: inset 0 0 0 8px rgba(255,255,255,0.2);
+    }
+    .marker::before,
+    .marker::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+    }
+    .marker::before {
+      width: 8px;
+      height: 64px;
+      border-radius: 5px;
+    }
+    .marker::after {
+      width: 64px;
+      height: 8px;
+      border-radius: 5px;
+    }
+    h1 { margin: 0 0 10px; font-size: 28px; }
+    p { margin: 0 0 16px; color: #5c6f60; }
+    .button {
+      display: inline-block;
+      background: var(--green);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="marker" aria-hidden="true"></div>
+    <h1>Offline</h1>
+    <p>You are not connected to the internet right now. The app is still available offline, but some new data may not sync until you reconnect.</p>
+    <a class="button" href="./index.html">Open Juice Shop</a>
+  </div>
+</body>
+</html>
